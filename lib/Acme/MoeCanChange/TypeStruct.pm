@@ -15,32 +15,27 @@ my $data = +{
     'neatly'      => [qw/清楚 500 0 1000 0 0 0 0 300 0 600/],
     'bitch'       => [qw/小悪魔 300 300 0 200 0 0 0 0 600 200/],
     'cool'        => [qw/クール 0 0 400 0 200 100 0 700 0 200/],
-世話焼き 600 600 1000 800 3000
-ﾔﾝﾃﾞﾚ 400 800 800 600 2600
-泣き虫 700 1000 500 2200
-高貴 800 1000 700 2500
-ﾏﾆｯｼｭ 1000 800 400 300 2500
-やんちゃ 200 500 500 800 200 600 2800
-まじめ 800 800 1000 2600
-    kind       => 200,
-    mischief   INTEGER     NOT NULL DEFAULT 0,
-    graceful   INTEGER     NOT NULL DEFAULT 0,
-    showy      INTEGER     NOT NULL DEFAULT 0,
-    aggressive INTEGER     NOT NULL DEFAULT 0,
-    reserved   INTEGER     NOT NULL DEFAULT 0,
-    vigor      INTEGER     NOT NULL DEFAULT 0,
-    shy        INTEGER     NOT NULL DEFAULT 0,
-    curiosity  INTEGER     NOT NULL DEFAULT 0,
-    mild       INTEGER     NOT NULL DEFAULT 0
+    'obliging'    => [qw/世話焼き 600 0 0 0 600 0 0 0 1000 800/],
+    'yandere'     => [qw/ヤンデレ 0 400 0 800 0 800 600 0 0 0/],
+    'crybaby'     => [qw/泣き虫 700 0 0 0 0 1000 0 0 0 500/],
+    'noble'       => [qw/高貴 0 0 800 1000 700 0 0 0 0/],
+    'manish'      => [qw/マニッシュ 0 1000 0 0 800 0 0 400 300 0/],
+    'tomboy'      => [qw/やんちゃ 200 500 0 500 0 0 800 0 200 600/],
+    'serious'     => [qw/まじめ 800 800 1000 0 0 0 0 0 0 0/],
+};
 
-   
-}
+my @skey = qw/
+    name kind mischied graceful showy aggressive
+    reserved vigor shy curiosity mild/;
+
+sub types { keys %{$data} }
 
 sub data_by {
     my ($class, $type) = @_;
-    
-    {
-        
+    my @struct = @{$data->{$type}};
+    my %result;
+    @result{@skey} = @struct; 
+    return %result;
 }
 
 1;
