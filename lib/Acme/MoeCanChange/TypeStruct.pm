@@ -28,14 +28,14 @@ my @skey = qw/
     name kind mischied graceful showy aggressive
     reserved vigor shy curiosity mild/;
 
-sub types { keys %{$data} }
+sub types { [ sort { $a cmp $b } keys %{$data}] }
 
 sub data_by {
     my ($class, $type) = @_;
     my @struct = @{$data->{$type}};
     my %result;
     @result{@skey} = @struct; 
-    return %result;
+    return \%result;
 }
 
 1;
