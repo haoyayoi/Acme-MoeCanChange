@@ -8,12 +8,11 @@ my $types = Acme::MoeCanChange::TypeStruct->data_by('bitch');
 ok $types;
 isa_ok $types, 'HASH';
 is_deeply $types, {
-    name       => '小悪魔',
     mild       => 200,
     aggressive => 0,
     kind       => 300,
     shy        => 0,
-    mischied   => 300,
+    mischief   => 300,
     showy      => 200,
     curiosity  => 600,
     vigor      => 0,

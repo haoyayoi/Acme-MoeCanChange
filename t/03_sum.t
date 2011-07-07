@@ -16,14 +16,27 @@ is $client->param_sum, undef;
 
 # default 
 {
-    my $diff = $client->param_sum('default');
+    my $need = $client->param_sum('default');
+    is_deeply $need, 
+        {
+            kind       => 0,
+            mischief   => 0,
+            graceful   => 0,
+            showy      => 0,
+            aggressive => 0,
+            reserved   => 0,
+            vigor      => 0,
+            shy        => 0,
+            curiosity  => 0,
+            mild       => 0,
+        };
 }
 
 # default, natural
 {
     my $diff = $client->param_sum('default', 'natural');
     is_deeply $diff, 
-        { 
+        {
             kind       => 200,
             mischief   => 200,
             graceful   => 200,
@@ -39,8 +52,8 @@ is $client->param_sum, undef;
 
 # changed
 {
-    my $diff = $client->param_sum('natural', 'spoiled');
-    is_deeply $diff, 
+    my $sum = $client->param_sum('natural', 'spoiled');
+    is_deeply $sum, 
         { 
             kind       => 1000,
             mischief   => 200,

@@ -25,16 +25,20 @@ my $data = +{
 };
 
 my @skey = qw/
-    name kind mischied graceful showy aggressive
+    kind mischief graceful showy aggressive
     reserved vigor shy curiosity mild/;
 
-sub types { [ sort { $a cmp $b } keys %{$data}] }
+sub types { [ sort { $a cmp $b } keys %{$data} ] }
+
+sub param_keys { [ sort { $a cmp $b } @skey ] }
 
 sub data_by {
     my ($class, $type) = @_;
     my @struct = @{$data->{$type}};
     my %result;
+    unshift @skey, 'name';
     @result{@skey} = @struct; 
+    delete $result{name};
     return \%result;
 }
 

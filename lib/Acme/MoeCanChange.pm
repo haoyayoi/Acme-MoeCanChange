@@ -8,6 +8,7 @@ our $VERSION = '0.01';
 
 use DBI;
 use SQL::Maker;
+use Acme::MoeCanChange::TypeStruct;
 use Class::Accessor::Lite (
     rw => [ qw(home db) ]
 );
@@ -32,17 +33,16 @@ sub dbh {
     return $dbh;
 }
 
-sub sql_builder {
-    my $self = shift;
-    SQL::Maker->new( driver => 'SQLite' );
-}
+sub sql_builder { SQL::Maker->new( driver => 'SQLite' ) }
 
 sub type_construct {
     my ($self, $type) = @_;
     return unless $type;
     
     my $dbh = $self->db || $self->dbh;
-    my ($sql, @binds) = $self->sql_builder->select('type', ['*'], { name_en => $type });
+    my ($sql, @binds) = $self->sql_builder->select(
+        'type', ['*'], { name_en => $type }
+    );
     my $sth = $dbh->prepare($sql);
     $sth->execute(@binds);
     my $result = $sth->fetchrow_hashref;
@@ -67,17 +67,40 @@ sub need_param {
         to_name      => delete $to_param->{name},
         to_name_en   => delete $to_param->{name_en},
     };
-    foreach my $key (keys %$base_param) {
-        if ( ($to_param->{$key} || 0) > ($base_param->{$key} || 0)) {
-            $result->{$key} = $to_param->{$key} - $base_param->{$key};
+    my $keys = Acme::MoeCanChange::TypeStruct->param_keys;
+    foreach my $key (@{$keys}) {
+        if ( ($to_param->{$key} || 0) > ($base_param->{$key} || 0) ) {
+            $result->{$key} = $to_param->{$key} - $base_param->{$key} || 0;
         }
     }
     return $result;
 }
 
 sub param_sum {
-    my ($self, $args) = @_;
-    
+    my ($self, @args) = @_;
+    return unless @args;
+   
+    my $structs = +{};
+    foreach my $type (@args) {
+        $structs->{$type} = $self->type_construct($type);
+        delete $structs->{$type}->{name};
+        delete $structs->{$type}->{name_en};
+        delete $structs->{$type} unless keys %{$structs->{$type}};
+    }
+    return unless keys %{$structs};
+
+    my $result = +{};
+    my $keys = Acme::MoeCanChange::TypeStruct->param_keys;
+    foreach my $key (@{$keys}) {
+        my @type_by_key;
+        foreach my $type (@args) {
+            my $val = $structs->{$type}->{$key} || 0;
+            push @type_by_key, $val;
+        }
+        my @order_type_by_key = sort { $b <=> $a } @type_by_key;
+        $result->{$key} = shift @order_type_by_key;
+    }
+    return $result;
 }
 
 1;
